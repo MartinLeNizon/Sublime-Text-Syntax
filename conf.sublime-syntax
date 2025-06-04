@@ -1,0 +1,24 @@
+%YAML 1.2
+---
+name: Conf
+file_extensions:
+  - conf
+scope: source.conf
+contexts:
+  main:
+    - match: '^#.*$'
+      scope: comment.line.number-sign.conf
+
+    - match: '^\s*(include)\s+([^\s#]+)'
+      captures:
+        1: keyword.other.include.conf
+        2: string.unquoted.path.conf
+
+    - match: '^\s*([a-zA-Z0-9_.-]+)\s+(.+?)\s*(#.*)?$'
+      captures:
+        1: variable.parameter.conf
+        2: string.unquoted.value.conf
+        3: comment.line.number-sign.conf
+
+    - match: '^\s*$'
+      scope: meta.empty-line.conf

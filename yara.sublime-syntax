@@ -1,0 +1,40 @@
+%YAML 1.2
+---
+name: Yara
+file_extensions:
+  - yar
+  - yara
+scope: source.conf
+contexts:
+  main:
+    - match: '^\b(rule)\b(.*)\b$'
+      captures:
+        1: constant.language
+
+    - match: '\/\/.*$'
+      scope: comment.line.double-slash
+
+    - match: '\b(meta|strings|condition)\b'
+      scope: keyword.control
+
+    - match: '\b(author|description|version|date|threat_level|reference|ascii|wide|nocase|xor|and|or|of)\b'
+      scope: variable.parameter
+
+    - match: '("|\{ )'
+      scope: punctuation.definition.string
+      push: quoted-string
+
+    - match: '(=|<|>)'
+      scope: keyword.operator
+
+
+  quoted-string:
+    - meta_scope: string.quoted.double
+
+    - match: '\?'
+      scope: keyword.operator
+
+
+    - match: '"| \}'
+      scope: punctuation.definition.string.end
+      pop: true

@@ -1,0 +1,47 @@
+%YAML 1.2
+---
+name: Snort
+file_extensions:
+  - snort
+  - rules
+scope: source.conf
+contexts:
+  main:
+    # Comment
+    - match: '#.*$'
+      scope: comment.line.number-sign.snort
+
+    # First line
+    - match: '^\b(alert|block|drop|log|pass)\b (.*?) (.*?) (.*?) (.*?) (.*?) (.*?) '
+      captures: 
+        1: constant.language
+        2: variable.parameter.snort
+        5: constant.language
+
+    - match: '\b(\b(msg|reference|gid|sid|rev|classtype|priority|metadata|service|rem|file_meta|content|fast_pattern|nocase|width|endian|offset|depth|distance|within|http_buffers|bufferlen|isdataat|dsize|pcre|regex|pkt_data|raw_data|file_data|js_data|vba_data|base64_decode|base64_data|byte_extract|byte_test|byte_math|byte_jump)\b)'
+      scope: keyword.control.snort
+
+    - match: '"'
+      scope: punctuation.definition.string.begin.snort
+      push: quoted-snort-string
+
+    - match: '\\ *$'
+      scope: comment.line.number-sign.snort
+
+
+
+  quoted-snort-string:
+    - meta_scope: string.quoted.double.snort
+    - match: '"'
+      scope: punctuation.definition.string.end.snort
+      pop: true
+
+    # |literal| pattern: don't highlight the pipes, only what's inside
+    - match: '(\|)([^|]+)(\|)'
+      captures:
+        1: comment.line.number-sign.snort
+        2: constant.numeric
+        3: comment.line.number-sign.snort
+
+
+
