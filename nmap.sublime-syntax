@@ -1,0 +1,32 @@
+%YAML 1.2
+---
+name: Nmap Results Enhanced
+file_extensions:
+  - nmap
+  - nmap.txt
+scope: source.nmap
+contexts:
+  main:
+    - match: '^Nmap scan report for .+'
+      scope: entity.name.function.nmap
+
+    - match: '^Host is up.*$'
+      scope: comment.line.status.nmap
+
+    - match: '^PORT\s+STATE\s+SERVICE(\s+VERSION)?$'
+      scope: keyword.control.header.nmap
+
+    # Match port line with optional version info
+    - match: '^(\d+)/(tcp|udp)\s+(open|closed|filtered)\s+(\S+)(\s+.+)?$'
+      captures:
+        1: constant.numeric.port.nmap           # Port number
+        2: storage.type.protocol.nmap           # tcp/udp
+        3: constant.language.state.nmap         # open/closed/filtered
+        4: support.function.service.nmap        # Service name
+        5: string.unquoted.version.nmap         # Optional version info
+      scope: meta.port-line.nmap
+
+    - match: '^MAC Address: ([0-9A-Fa-f:]{17})'
+      captures:
+        1: variable.language.mac.nmap
+      scope: meta.mac-address.nmap
